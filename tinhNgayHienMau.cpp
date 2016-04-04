@@ -1,16 +1,14 @@
-//tinh ngay hien mau
+//tinh ngay hien mau: nhap ngay hien mau cuoi cung -> tinh ngay tiep theo co the hien mau (84 ngay sau)
 #include<stdio.h>
-#include<stdlib.h>
-unsigned int ngay, thang, nam;
-int ktNamNhuan(int namCanTim){
-	if((namCanTim % 4 == 0) && (namCanTim % 100 != 0) || (namCanTim % 400 == 0))
-		return true;
-	return false;
+int kiemTraNamNhuan(int nam){
+	if((nam % 4 == 0) && (nam % 100 != 0) || (nam % 400 == 0))
+		return 1;
+	return 0;
 }
-int tinhNgayCuoiThang(int thangCanTim, int namCanTim){
-	switch (thangCanTim){
+int tinhNgayCuaThang(int thang,int nam){
+	switch (thang){
 		case 2:
-			if(ktNamNhuan(namCanTim) == 1)
+			if(kiemTraNamNhuan(nam) == 1)
 				return 29;
 			return 28;
 			break;
@@ -24,31 +22,32 @@ int tinhNgayCuoiThang(int thangCanTim, int namCanTim){
 			return 31;
 			break;
 		default:
-			return 30;
+			return 30;	
 	}
 }
-void nhap(){
-	printf("Nhap thong tin ngay hien mau \n");
+
+void nhap(int &ngay, int &thang, int &nam){
+	printf("Nhap thong tin ngay hien mau: \n");
 	/*
-	* nhap nam
-	* nam nam trong khoang 1994(nam ra doi) den 2016 (nam hien tai)
+	*nhap nam
+	*1994 <= nam  <= 2016
 	*/
 	printf("Nhap nam: ");
-	scanf("%d",&nam);
-	while(nam < 2000 || nam > 2016){
-		printf("Nhap nam tu 2000 den 2016: ");
-		scanf("%d",&nam);
+	scanf("%d", &nam);
+	while(nam < 1994 || nam > 2016){
+		printf("Nhap nam tu 1994 den 2016: ");
+		scanf("%d", &nam);
 	}
-
+	
 	/*
 	* nhap thang
 	* thang tu 1 den 12
 	*/
 	printf("Nhap thang: ");
-	scanf("%d",&thang);
+	scanf("%d", &thang);
 	while(thang < 1 || thang > 12){
 		printf("Nhap thang tu 1 den 12: ");
-		scanf("%d",thang);
+		scanf("%d", &thang);
 	}
 	
 	/*
@@ -56,16 +55,16 @@ void nhap(){
 	* dua vao thang de kiem tra ngay
 	*/
 	printf("Nhap ngay: ");
-	scanf("%d",&ngay);
-	int ngayCuoiThang = tinhNgayCuoiThang(thang, nam);
+	scanf("%d", &ngay);
+	int ngayCuoiThang = tinhNgayCuaThang(thang, nam);
 	while(ngay < 1 || ngay > ngayCuoiThang){
-		printf("Nhap ngay tu 1 den %d ",ngayCuoiThang);
-		scanf("%d",&ngay);
+		printf("Nhap ngay tu 1 ngay den %d: ", ngayCuoiThang);
+		scanf("%d", &ngay);
 	}
 }
-void tinhNgay(){
+
+void tinhNgayHienMau(int &ngay, int &thang, int &nam){
 	int soNgayToiThieu = 84;
-	//xet thang: thang = 12 thi set
 	/*
 	*	xet ngay
 	*	gia su so ngay toi thieu = 90, tat ca cac thang co 30 ngay thi ngay hien mau giu nguyen
@@ -73,28 +72,32 @@ void tinhNgay(){
 	*	Ta se lay ngay - 6 va cong chenh lech giua ngay cuoi cac thang voi 30
 	*/
 	//tru ngay di 6
-	if(ngay > 7)
+	if(ngay >= 7){
 		ngay -= 6;
-	else{
+	}else {
 		thang -= 1;
-		ngay = ngay - 6 + tinhNgayCuoiThang(thang, nam);
+		ngay = ngay - 6 + tinhNgayCuaThang(thang, nam);
 	}
+	
 	//cong chenh lech thang
-	for(int i = 0; i < 3; i++){
+	for( int i = 0; i < 3; i++){
 		//kiem tra thang
-		if(thang == 13)
-			thang = 1;
+		if(thang > 12){
+			thang = thang - 12;
+			nam ++;
+		}
 		//cong chenh lech ngay
-		ngay += 30 - tinhNgayCuoiThang(thang, nam);
-//		printf("qua thang %d ngay la: %d \n",thang,ngay);
-		thang = thang + 1;
+		ngay += 30 - tinhNgayCuaThang(thang, nam);
+		thang ++;
 	}
 }
-void inKetQua(){
+
+void inKetQua(int &ngay, int &thang, int &nam){
 	printf("Ngay hien mau tiep:\n %d %d %d", ngay, thang, nam);
 }
 int main(){
-	nhap();
-	tinhNgay();
-	inKetQua();
+	int ngay, thang, nam;
+	nhap(ngay, thang, nam);
+	tinhNgayHienMau(ngay, thang, nam);
+	inKetQua(ngay, thang, nam);
 }
